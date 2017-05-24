@@ -1,4 +1,4 @@
-setwd("/home/sshuser/marinch")
+setwd("/home/sshuser/marinch/SparkMLADS/Code/MRS")
 source("SetComputeContext.r")
 
 # For local compute context, skip the following line
@@ -133,8 +133,20 @@ trainers <- list(fastTrees(), fastTrees(numTrees = 60), fastTrees(learningRate =
 fastTreesEnsembleModelTime <- system.time(
   fastTreesEnsembleModel <- rxEnsemble(formula, data = trainDS,
     type = "binary", trainers = trainers, replace = T)
-)
+) # If using hive: RxSparkData is only supported in RxSpark() with splitData = TRUE
 # 64.73 sec
+
+# Try for hive:
+fastTreesEnsembleModelTime <- system.time(
+  fastTreesEnsembleModel <- rxEnsemble(formula, data = trainDS,
+    type = "binary", trainers = trainers, 
+    randomSeed = 111        
+    , replace = FALSE
+    , modelCount = 4
+    , sampRate = 0.75
+    , combineMethod = NULL 
+    , splitData = TRUE)
+)
 
 fastTreesEnsembleModel
 summary(fastTreesEnsembleModel)
