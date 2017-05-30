@@ -94,8 +94,20 @@ airlineDF <- select_(airlineDF, .dots = varsToKeep)
 
 airlineDF <- airlineDF %>% mutate(CRSDepTime = floor(CRSDepTime / 100))
 
+# Rename Weather Columns --------------------------------------------------
+
+weatherNames <- colnames(weatherDF)
+
+weatherNames[weatherNames == "AirportID"] <- "OriginAirportID"
+weatherNames[weatherNames == "AdjustedYear"] <- "Year"
+weatherNames[weatherNames == "AdjustedMonth"] <- "Month"
+weatherNames[weatherNames == "AdjustedDay"] <- "DayOfMonth"
+weatherNames[weatherNames == "AdjustedHour"] <- "CRSDepTime"
+
+weatherDF <- weatherDF %>% setNames(weatherNames)
+
 weatherSummary <- weatherDF %>% 
-  group_by(AdjustedYear, AdjustedMonth, AdjustedDay, AdjustedHour, AirportID) %>% 
+  group_by(Year, Month, DayOfMonth, CRSDepTime, OriginAirportID) %>% 
   summarise(Visibility = mean(Visibility),
             DryBulbCelsius = mean(DryBulbCelsius),
             DewPointCelsius = mean(DewPointCelsius),
@@ -103,27 +115,15 @@ weatherSummary <- weatherDF %>%
             WindSpeed = mean(WindSpeed),
             Altimeter = mean(Altimeter))
 
+# weatherSummary <- weatherSummary %>% sdf_register("weather_summary")
+# tbl_cache(sc, "weather_summary")
+
 #######################################################
 # Join airline data with weather at Origin Airport
 #######################################################
 
 originDF <- left_join(x = airlineDF,
-                      y = weatherSummary,
-                      by = c("OriginAirportID" = "AirportID",
-                             "Year" = "AdjustedYear",
-                             "Month" = "AdjustedMonth",
-                             "DayOfMonth"= "AdjustedDay",
-                             "CRSDepTime" = "AdjustedHour"))
-
-
-
-# Remove redundant columns ------------------------------------------------
-
-vars <- colnames(originDF)
-varsToDrop <- c('AdjustedYear', 'AdjustedMonth', 'AdjustedDay', 'AdjustedHour', 'AirportID')
-varsToKeep <- vars[!(vars %in% varsToDrop)]
-
-originDF <- select_(originDF, .dots = varsToKeep)
+                      y = weatherSummary)
 
 originDF <- originDF %>% rename(VisibilityOrigin = Visibility,
                                 DryBulbCelsiusOrigin = DryBulbCelsius,
@@ -132,28 +132,28 @@ originDF <- originDF %>% rename(VisibilityOrigin = Visibility,
                                 WindSpeedOrigin = WindSpeed,
                                 AltimeterOrigin = Altimeter)
 
+originDF <- originDF %>% sdf_register("flightsweatherorigin")
+tbl_cache(sc, "flightsweatherorigin")
+
 #######################################################
 # Join airline data with weather at Destination Airport
 #######################################################
 
-destDF <- left_join(x = originDF,
-                    y = weatherSummary,
-                    by = c("DestAirportID" = "AirportID",
-                           "Year" = "AdjustedYear",
-                           "Month" = "AdjustedMonth",
-                           "DayOfMonth"= "AdjustedDay",
-                           "CRSDepTime" = "AdjustedHour"))
+weatherSummary <- rename(weatherSummary,
+                       DestAirportID = OriginAirportID)
+                       
+# weatherSummaryNames <- colnames(weatherSummary)
+# weatherSummaryNames[weatherSummaryNames == "OriginAirportID"] <- "DestAirportID"
+# 
+# weatherSummary <- weatherSummary %>% setNames(weatherSummaryNames)
 
+destDF <- left_join(x = originDF,
+                    y = weatherSummary)
 
 
 # Rename Columns and Drop Reduncies ---------------------------------------
 
-vars <- colnames(destDF)
-varsToDrop <- c('AdjustedYear', 'AdjustedMonth', 'AdjustedDay', 'AdjustedHour', 'AirportID')
-varsToKeep <- vars[!(vars %in% varsToDrop)]
-airWeatherDF <- select_(destDF, .dots = varsToKeep)
-
-airWeatherDF <- rename(airWeatherDF,
+airWeatherDF <- rename(destDF,
                        VisibilityDest = Visibility,
                        DryBulbCelsiusDest = DryBulbCelsius,
                        DewPointCelsiusDest = DewPointCelsius,
@@ -166,4 +166,5 @@ tbl_cache(sc, "flightsweather")
 
 library(DBI)
 dbGetQuery(sc, "SELECT ArrDel15, COUNT(*) FROM flightsweather GROUP BY arrDel15")
+dbGetQuery(sc, "SELECT OriginAirportID, DestAirportID, VisibilityOrigin, VisibilityDest FROM flightsweather LIMIT 10")
 
