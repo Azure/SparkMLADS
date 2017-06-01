@@ -125,7 +125,13 @@ airWeatherDF <- rename(destDF,
 airWeatherDF <- airWeatherDF %>% sdf_register("flightsweather")
 tbl_cache(sc, "flightsweather")
 
-library(DBI)
-dbGetQuery(sc, "SELECT ArrDel15, COUNT(*) FROM flightsweather GROUP BY arrDel15")
-dbGetQuery(sc, "SELECT OriginAirportID, DestAirportID, VisibilityOrigin, VisibilityDest FROM flightsweather LIMIT 10")
 
+#######################################################
+# The joined data can be queried using SQL
+#######################################################
+
+# Count the number of rows
+tbl(sc, sql("SELECT COUNT(*) FROM flightsweather"))
+
+# Count each distinct value in the ArrDel15 column
+tbl(sc, sql("SELECT ArrDel15, COUNT(*) FROM flightsweather GROUP BY ArrDel15"))
