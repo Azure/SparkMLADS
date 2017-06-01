@@ -99,8 +99,6 @@ originDF <- originDF %>% rename(VisibilityOrigin = Visibility,
                                 WindSpeedOrigin = WindSpeed,
                                 AltimeterOrigin = Altimeter)
 
-originDF <- originDF %>% sdf_register("flightsweatherorigin")
-tbl_cache(sc, "flightsweatherorigin")
 
 #######################################################
 # Join airline data with weather at Destination Airport
