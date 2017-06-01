@@ -2,41 +2,13 @@ Sys.setenv(SPARK_HOME="/usr/hdp/current/spark2-client")
 
 library(sparklyr)
 library(dplyr)
-#library(tidyverse)
-
-connection_list_tables <- function (sc, includeType = FALSE) 
-{
-  dbi <- sc
-  if (!is.null(dbi)) 
-    sort(dplyr:::db_list_tables(dbi))
-  else character()
-}
-
-assignInNamespace("connection_list_tables",connection_list_tables, ns="sparklyr")
-
-
-# Configure cluster (D13v2large 56G 8core 400GBdisk) ----------------------
-
-# conf <- sparklyr::spark_config()
-# conf$'sparklyr.shell.executor-memory' <- "4g"
-# conf$'sparklyr.shell.driver-memory' <- "4g"
-# conf$spark.executor.cores <- 4
-# conf$spark.executor.memory <- "4G"
-# conf$spark.yarn.am.cores  <- 4
-# conf$spark.yarn.am.memory <- "4G"
-# conf$spark.dynamicAllocation.enabled <- "false"
-# conf$spark.default.parallelism <- 8
-
-# Connect to cluster ------------------------------------------------------
-
-# sc <- sparklyr::spark_connect(master = "yarn-client", config = conf)
 
 cc <- rxSparkConnect(interop = "sparklyr",
                      reset = T,
-                     consoleOutput = TRUE, 
-                     numExecutors = 4,  # FOR HDINSIGHT CLUSTER
-                     executorCores = 8, # FOR HDINSIGHT CLUSTER
-                     executorMem = "4g" # FOR HDINSIGHT CLUSTER
+                     consoleOutput = TRUE 
+                     # numExecutors = 4,
+                     # executorCores = 8,
+                     # executorMem = "4g"
 )
 
 sc <- rxGetSparklyrConnection(cc)
@@ -64,20 +36,18 @@ weatherDF <- sparklyr::spark_read_csv(sc = sc,
 # Rename Airline Columns --------------------------------------------------
 
 
-airNames <- colnames(airlineDF)
-
-airNames[airNames == "ARR_DEL15"] <- "ArrDel15"
-airNames[airNames == "YEAR"] <- "Year"
-airNames[airNames == "MONTH"] <- "Month"
-airNames[airNames == "DAY_OF_MONTH"] <- "DayOfMonth"
-airNames[airNames == "DAY_OF_WEEK"] <- "DayOfWeek"
-airNames[airNames == "UNIQUE_CARRIER"] <- "Carrier"
-airNames[airNames == "ORIGIN_AIRPORT_ID"] <- "OriginAirportID"
-airNames[airNames == "DEST_AIRPORT_ID"] <- "DestAirportID"
-airNames[airNames == "CRS_DEP_TIME"] <- "CRSDepTime"
-airNames[airNames == "CRS_ARR_TIME"] <- "CRSArrTime"
-
-airlineDF <- airlineDF %>% setNames(airNames)
+airlineDF <- rename(airlineDF,
+                    ArrDel15 = ARR_DEL15,
+                    Year = YEAR,
+                    Month = MONTH,
+                    DayOfMonth = DAY_OF_MONTH,
+                    DayOfWeek = DAY_OF_WEEK,
+                    Carrier = UNIQUE_CARRIER,
+                    OriginAirportID = ORIGIN_AIRPORT_ID,
+                    DestAirportID = DEST_AIRPORT_ID,
+                    CRSDepTime = CRS_DEP_TIME,
+                    CRSArrTime = CRS_ARR_TIME
+)
 
 
 # Join --------------------------------------------------------------------
@@ -96,15 +66,14 @@ airlineDF <- airlineDF %>% mutate(CRSDepTime = floor(CRSDepTime / 100))
 
 # Rename Weather Columns --------------------------------------------------
 
-weatherNames <- colnames(weatherDF)
 
-weatherNames[weatherNames == "AirportID"] <- "OriginAirportID"
-weatherNames[weatherNames == "AdjustedYear"] <- "Year"
-weatherNames[weatherNames == "AdjustedMonth"] <- "Month"
-weatherNames[weatherNames == "AdjustedDay"] <- "DayOfMonth"
-weatherNames[weatherNames == "AdjustedHour"] <- "CRSDepTime"
+weatherDF <- rename(weatherDF,
+                    OriginAirportID = AirportID,
+                    Year = AdjustedYear,
+                    Month = AdjustedMonth,
+                    DayOfMonth = AdjustedDay,
+                    CRSDepTime = AdjustedHour)
 
-weatherDF <- weatherDF %>% setNames(weatherNames)
 
 weatherSummary <- weatherDF %>% 
   group_by(Year, Month, DayOfMonth, CRSDepTime, OriginAirportID) %>% 
@@ -115,8 +84,6 @@ weatherSummary <- weatherDF %>%
             WindSpeed = mean(WindSpeed),
             Altimeter = mean(Altimeter))
 
-# weatherSummary <- weatherSummary %>% sdf_register("weather_summary")
-# tbl_cache(sc, "weather_summary")
 
 #######################################################
 # Join airline data with weather at Origin Airport
@@ -142,10 +109,6 @@ tbl_cache(sc, "flightsweatherorigin")
 weatherSummary <- rename(weatherSummary,
                        DestAirportID = OriginAirportID)
                        
-# weatherSummaryNames <- colnames(weatherSummary)
-# weatherSummaryNames[weatherSummaryNames == "OriginAirportID"] <- "DestAirportID"
-# 
-# weatherSummary <- weatherSummary %>% setNames(weatherSummaryNames)
 
 destDF <- left_join(x = originDF,
                     y = weatherSummary)
