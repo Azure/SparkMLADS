@@ -1,4 +1,4 @@
-setwd("/home/sshuser/marinch/SparkMLADS/Code/MRS")
+setwd("/home/sshuser/SparkMLADS/Code/MRS")
 source("SetComputeContext.r")
 
 # For local compute context, skip the following line
