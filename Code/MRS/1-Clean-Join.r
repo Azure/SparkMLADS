@@ -14,7 +14,9 @@ cc <- rxSparkConnect(interop = "sparklyr",
 sc <- rxGetSparklyrConnection(cc)
 
 
-# Load Data to Spark DataFrames -------------------------------------------
+################################################
+# Specify the data sources
+################################################
 
 
 airlineDF <- sparklyr::spark_read_csv(sc = sc, 
@@ -32,8 +34,9 @@ weatherDF <- sparklyr::spark_read_csv(sc = sc,
                                       null_value = "null")
 
 
-
-# Rename Airline Columns --------------------------------------------------
+################################################
+# Transform the data
+################################################
 
 
 airlineDF <- rename(airlineDF,
@@ -50,10 +53,7 @@ airlineDF <- rename(airlineDF,
 )
 
 
-# Join --------------------------------------------------------------------
-
-
-# Select desired columns from the flight data. 
+# Keep only the desired columns from the flight data 
 
 varsToKeep <- c("ArrDel15", "Year", "Month", "DayOfMonth", 
                 "DayOfWeek", "Carrier", "OriginAirportID", 
@@ -62,9 +62,9 @@ varsToKeep <- c("ArrDel15", "Year", "Month", "DayOfMonth",
 airlineDF <- select_(airlineDF, .dots = varsToKeep)
 
 
-airlineDF <- airlineDF %>% mutate(CRSDepTime = floor(CRSDepTime / 100))
+# Round down scheduled departure time to full hour
 
-# Rename Weather Columns --------------------------------------------------
+airlineDF <- airlineDF %>% mutate(CRSDepTime = floor(CRSDepTime / 100))
 
 
 weatherDF <- rename(weatherDF,
@@ -74,6 +74,8 @@ weatherDF <- rename(weatherDF,
                     DayOfMonth = AdjustedDay,
                     CRSDepTime = AdjustedHour)
 
+
+# Average the weather readings by hour
 
 weatherSummary <- weatherDF %>% 
   group_by(Year, Month, DayOfMonth, CRSDepTime, OriginAirportID) %>% 
@@ -107,12 +109,8 @@ originDF <- originDF %>% rename(VisibilityOrigin = Visibility,
 weatherSummary <- rename(weatherSummary,
                        DestAirportID = OriginAirportID)
                        
-
 destDF <- left_join(x = originDF,
                     y = weatherSummary)
-
-
-# Rename Columns and Drop Reduncies ---------------------------------------
 
 airWeatherDF <- rename(destDF,
                        VisibilityDest = Visibility,
@@ -122,12 +120,18 @@ airWeatherDF <- rename(destDF,
                        WindSpeedDest = WindSpeed,
                        AltimeterDest = Altimeter)
 
+
+#######################################################
+# Register the joined data as a Spark SQL/Hive table
+#######################################################
+
+
 airWeatherDF <- airWeatherDF %>% sdf_register("flightsweather")
 tbl_cache(sc, "flightsweather")
 
 
 #######################################################
-# The joined data can be queried using SQL
+# The table of joined data can be queried using SQL
 #######################################################
 
 # Count the number of rows
