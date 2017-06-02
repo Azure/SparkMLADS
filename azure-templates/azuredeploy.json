@@ -97,7 +97,20 @@
                   "username": "[parameters('sshUserName')]",
                   "password": "[parameters('sshPassword')]"
                 }
-              }
+              },
+              "scriptActions": [
+                  {
+                      "name": "Upgrade MRS",
+                      "uri": "http://mrseagle.blob.core.windows.net/share/update901.sh",
+                      "parameters": "",
+                      "isHeadNode": true,
+                      "isWorkerNode": true,
+                      "isPersisted": true,
+                      "isZookeeperNode": false,
+                      "isEdgeNode": true,
+                      "applicationName": null
+                  }
+              ]
             },
             {
               "name": "workernode",
@@ -110,7 +123,20 @@
                   "username": "[parameters('sshUserName')]",
                   "password": "[parameters('sshPassword')]"
                 }
-              }
+              },
+              "scriptActions": [
+                  {
+                      "name": "Upgrade MRS",
+                      "uri": "http://mrseagle.blob.core.windows.net/share/update901.sh",
+                      "parameters": "",
+                      "isHeadNode": true,
+                      "isWorkerNode": true,
+                      "isPersisted": true,
+                      "isZookeeperNode": false,
+                      "isEdgeNode": true,
+                      "applicationName": null
+                  }
+              ]
             },
             {
               "name": "zookeepernode",
@@ -142,7 +168,19 @@
                   }
               },
               "virtualNetworkProfile": null,
-              "scriptActions": []
+              "scriptActions": [
+                  {
+                      "name": "Upgrade MRS",
+                      "uri": "http://mrseagle.blob.core.windows.net/share/update901.sh",
+                      "parameters": "",
+                      "isHeadNode": true,
+                      "isWorkerNode": true,
+                      "isPersisted": true,
+                      "isZookeeperNode": false,
+                      "isEdgeNode": true,
+                      "applicationName": null
+                  }
+              ]
             }
           ]
         }
