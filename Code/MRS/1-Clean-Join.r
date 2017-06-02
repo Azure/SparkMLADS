@@ -21,14 +21,14 @@ sc <- rxGetSparklyrConnection(cc)
 
 airlineDF <- sparklyr::spark_read_csv(sc = sc, 
                                       name = "airline",
-                                      path = "/marinch/AirlineSubsetCsv", 
+                                      path = "/share/AirlineSubsetCsv", 
                                       header = TRUE, 
                                       infer_schema = TRUE, 
                                       null_value = "null")
 
 weatherDF <- sparklyr::spark_read_csv(sc = sc, 
                                       name = "weather",
-                                      path = "/marinch/WeatherSubsetCsv",
+                                      path = "/share/WeatherSubsetCsv",
                                       header = TRUE,
                                       infer_schema = TRUE,
                                       null_value = "null")
