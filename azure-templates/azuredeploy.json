@@ -170,17 +170,6 @@
               "virtualNetworkProfile": null,
               "scriptActions": [
                   {
-                      "name": "Upgrade MRS",
-                      "uri": "https://mrseagle.blob.core.windows.net/share/update901.sh",
-                      "parameters": "",
-                      "isHeadNode": true,
-                      "isWorkerNode": true,
-                      "isPersisted": true,
-                      "isZookeeperNode": false,
-                      "isEdgeNode": true,
-                      "applicationName": null
-                  },
-                  {
                       "name": "Set up tutorial",
                       "uri": "https://raw.githubusercontent.com/Azure/SparkMLADS/master/setup-files/setup.sh",
                       "parameters": "",
