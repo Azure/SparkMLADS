@@ -171,7 +171,7 @@
               "scriptActions": [
                   {
                       "name": "Upgrade MRS",
-                      "uri": "http://mrseagle.blob.core.windows.net/share/update901.sh",
+                      "uri": "https://mrseagle.blob.core.windows.net/share/update901.sh",
                       "parameters": "",
                       "isHeadNode": true,
                       "isWorkerNode": true,
