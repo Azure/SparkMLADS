@@ -179,6 +179,17 @@
                       "isZookeeperNode": false,
                       "isEdgeNode": true,
                       "applicationName": null
+                  },
+                  {
+                      "name": "Set up tutorial",
+                      "uri": "https://github.com/Azure/SparkMLADS/blob/master/setup-files/setup.sh",
+                      "parameters": "",
+                      "isHeadNode": false,
+                      "isWorkerNode": false,
+                      "isPersisted": false,
+                      "isZookeeperNode": false,
+                      "isEdgeNode": true,
+                      "applicationName": null
                   }
               ]
             }
