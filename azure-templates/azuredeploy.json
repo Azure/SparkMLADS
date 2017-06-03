@@ -182,7 +182,7 @@
                   },
                   {
                       "name": "Set up tutorial",
-                      "uri": "https://github.com/Azure/SparkMLADS/blob/master/setup-files/setup.sh",
+                      "uri": "https://raw.githubusercontent.com/Azure/SparkMLADS/master/setup-files/setup.sh",
                       "parameters": "",
                       "isHeadNode": false,
                       "isWorkerNode": false,
