@@ -20,12 +20,12 @@ if(useHDFS) {
   ################################################
   
   # ADDED FOR HDINSIGHT CLUSTER:
-  #rxOptions(hdfsHost = "hdfs://mycluster") # to access the cluster's locally attached HDFS storage
+  rxOptions(hdfsHost = "hdfs://mycluster") # to access the cluster's locally attached HDFS storage
   
   rxOptions(fileSystem = RxHdfsFileSystem())
   
   #dataDir <- "/user/RevoShare/remoteuser/Data"
-  dataDir <- "/share"
+  dataDir <- "/user/sshuser"
   
   ################################################
   
