@@ -1,4 +1,5 @@
-Sys.setenv(SPARK_HOME="/usr/hdp/current/spark2-client")
+setwd("/home/sshuser/SparkMLADS/Code/MRS")
+source("SetComputeContext.r")
 
 library(sparklyr)
 library(dplyr)
@@ -122,13 +123,14 @@ airWeatherDF <- rename(destDF,
 
 
 #######################################################
-# Register the joined data as a Spark SQL/Hive table
+# Save the joined data as a Spark SQL/Hive table
 #######################################################
 
+sdf_save_table(airWeatherDF, "flightsweather", overwrite = T)
 
-airWeatherDF <- airWeatherDF %>% sdf_register("flightsweather")
-tbl_cache(sc, "flightsweather")
+# Reduce the number of partitions for better efficiency
 
+airWeatherDF <- spark_load_table(sc, "flightsweather", repartition = 20)
 
 #######################################################
 # The table of joined data can be queried using SQL
