@@ -99,10 +99,13 @@ summary(fastTreesEnsembleModel)
 
 fastTreesEnsemblePredict <- RxXdfData(file.path(dataDir, "fastTreesEnsemblePredictSubset"))
 
+rxSetComputeContext("local")
 # Runs locally - Can we parallelize this with rxExecBy ?
-rxPredict(fastTreesEnsembleModel, data = testXDF, outData = fastTreesEnsemblePredict,
+fastTreesEnsemblePredictTime <- system.time(
+  rxPredict(fastTreesEnsembleModel, data = testXDF, outData = fastTreesEnsemblePredict,
           extraVarsToWrite = c("ArrDel15"),
           overwrite = TRUE)
+)
 
 # Calculate ROC and Area Under the Curve (AUC).
 
