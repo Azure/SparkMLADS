@@ -8,7 +8,7 @@ source("SetComputeContext.r")
 
 # split out the training data
 
-airWeatherTrainDF <- airWeatherDF %>% filter(Year == 2011) 
+airWeatherTrainDF <- airWeatherDF %>% filter(Year < 2012) 
 airWeatherTrainDF <- airWeatherTrainDF %>% sdf_register("flightsweathertrain")
 
 # split out the testing data
@@ -20,6 +20,8 @@ airWeatherTestDF <- airWeatherTestDF %>% sdf_register("flightsweathertest")
 # Create ScaleR data source objects
 
 colInfo <- list(
+  ArrDel15 = list(type="numeric"),
+  CRSArrTime = list(type="integer"),
   Year = list(type="factor"),
   Month = list(type="factor"),
   DayOfMonth = list(type="factor"),
@@ -70,7 +72,7 @@ rxPredict(logitModel, data = testDS, outData = logitPredict,
 
 logitRoc <- rxRoc("ArrDel15", "ArrDel15_Pred", logitPredict)
 logitAuc <- rxAuc(logitRoc)
-# 0.619
+# 0.6611517
 
 plot(logitRoc)
 
@@ -111,7 +113,7 @@ fastTreesEnsemblePredictTime <- system.time(
 
 fastTreesEnsembleRoc <- rxRoc("ArrDel15", "Probability.1", fastTreesEnsemblePredict)
 fastTreesEnsembleAuc <- rxAuc(fastTreesEnsembleRoc)
-# 0.6314349
+# 0.678672
 
 plot(fastTreesEnsembleRoc)
 
