@@ -24,8 +24,7 @@ if(useHDFS) {
   
   rxOptions(fileSystem = RxHdfsFileSystem())
   
-  #dataDir <- "/user/RevoShare/remoteuser/Data"
-  dataDir <- "/user/sshuser"
+  dataDir <- "/share"
   
   ################################################
   
