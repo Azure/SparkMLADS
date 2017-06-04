@@ -6,7 +6,8 @@ library(dplyr)
 
 cc <- rxSparkConnect(interop = "sparklyr",
                      reset = T,
-                     consoleOutput = TRUE 
+                     consoleOutput = TRUE,
+                     extraSparkConfig = "--conf spark.dynamicAllocation.enabled=false" # for H2O
                      # numExecutors = 4,
                      # executorCores = 8,
                      # executorMem = "4g"
@@ -22,14 +23,14 @@ sc <- rxGetSparklyrConnection(cc)
 
 airlineDF <- sparklyr::spark_read_csv(sc = sc, 
                                       name = "airline",
-                                      path = "/share/AirlineSubsetCsv", 
+                                      path = "hdfs://mycluster/share/Air2009to2012CSV", 
                                       header = TRUE, 
-                                      infer_schema = TRUE, 
+                                      infer_schema = FALSE, # Avoids parsing error
                                       null_value = "null")
 
 weatherDF <- sparklyr::spark_read_csv(sc = sc, 
                                       name = "weather",
-                                      path = "/share/WeatherSubsetCsv",
+                                      path = "hdfs://mycluster/share/Weather",
                                       header = TRUE,
                                       infer_schema = TRUE,
                                       null_value = "null")
@@ -130,7 +131,7 @@ sdf_save_table(airWeatherDF, "flightsweather", overwrite = T)
 
 # Reduce the number of partitions for better efficiency
 
-airWeatherDF <- spark_load_table(sc, "flightsweather", repartition = 20)
+airWeatherDF <- spark_load_table(sc, "flightsweather", repartition = 24)
 
 #######################################################
 # The table of joined data can be queried using SQL
