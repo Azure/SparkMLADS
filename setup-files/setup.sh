@@ -31,7 +31,7 @@ wget https://marinchpub.blob.core.windows.net/airwxpub/Weather.tgz
 tar xzf Air2009to2012CSV.tgz
 tar xzf Weather.tgz
 
-hdfs dfs -mkdir /share
+hdfs dfs -mkdir hdfs://mycluster/share
 hdfs dfs -copyFromLocal Air2009to2012CSV hdfs://mycluster/share
 hdfs dfs -copyFromLocal Weather hdfs://mycluster/share
 
