@@ -21,6 +21,7 @@ chmod 777 install.sh
 cd /home/sshuser
 
 git clone https://github.com/Azure/SparkMLADS
+chown -R sshuser:sshuser SparkMLADS
 
 mkdir /var/RevoShare/sshuser
 chown sshuser:sshuser /var/RevoShare/sshuser
