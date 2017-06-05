@@ -26,14 +26,14 @@ mkdir /var/RevoShare/sshuser
 chown sshuser:sshuser /var/RevoShare/sshuser
 
 # Airline data
-wget https://cdspsparksamples.blob.core.windows.net/data/Airline/WeatherSubsetCsv.tar.gz
-wget https://cdspsparksamples.blob.core.windows.net/data/Airline/AirlineSubsetCsv.tar.gz
-tar xzf AirlineSubsetCsv.tar.gz
-tar xzf WeatherSubsetCsv.tar.gz
+wget https://marinchpub.blob.core.windows.net/airwxpub/Air2009to2012CSV.tgz
+wget https://marinchpub.blob.core.windows.net/airwxpub/Weather.tgz
+tar xzf Air2009to2012CSV.tgz
+tar xzf Weather.tgz
 
 hdfs dfs -mkdir /share
-hdfs dfs -copyFromLocal AirlineSubsetCsv /share
-hdfs dfs -copyFromLocal WeatherSubsetCsv /share
+hdfs dfs -copyFromLocal Air2009to2012CSV hdfs://mycluster/share
+hdfs dfs -copyFromLocal Weather hdfs://mycluster/share
 
 Revo64 -e 'install.packages("sparklyr", repos = "https://mran.microsoft.com/snapshot/2017-05-01")'
 
