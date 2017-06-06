@@ -124,14 +124,12 @@ airWeatherDF <- rename(destDF,
 
 
 #######################################################
-# Save the joined data as a Spark SQL/Hive table
+# Register the joined data as a Spark SQL/Hive table
 #######################################################
+  
+airWeatherDF <- airWeatherDF %>% sdf_register("flightsweather")
+tbl_cache(sc, "flightsweather")
 
-sdf_save_table(airWeatherDF, "flightsweather", overwrite = T)
-
-# Reduce the number of partitions for better efficiency
-
-airWeatherDF <- spark_load_table(sc, "flightsweather", repartition = 24)
 
 #######################################################
 # The table of joined data can be queried using SQL
