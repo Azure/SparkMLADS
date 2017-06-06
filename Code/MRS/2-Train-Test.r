@@ -1,6 +1,4 @@
-setwd("/home/sshuser/SparkMLADS/Code/MRS")
-source("SetComputeContext.r")
-
+# NOTE: Run 1-Clean-Join.r in the same R session before running 2-Train-Test.r
 
 ################################################
 # Split out Training and Test Datasets
@@ -13,7 +11,7 @@ airWeatherTrainDF <- airWeatherTrainDF %>% sdf_register("flightsweathertrain")
 
 # split out the testing data
 
-airWeatherTestDF <- airWeatherDF %>% filter(Year == 2012) 
+airWeatherTestDF <- airWeatherDF %>% filter(Year == 2012 & Month == 1)
 airWeatherTestDF <- airWeatherTestDF %>% sdf_register("flightsweathertest")
 
 
@@ -52,11 +50,11 @@ formula <- as.formula(ArrDel15 ~ Month + DayOfMonth + DayOfWeek + Carrier + Orig
 
 # Use the scalable rxLogit() function
 
-system.time(
 logitModel <- rxLogit(formula, data = trainDS)
-) # 87 sec
-options(max.print = 10000)
-base::summary(logitModel)
+
+summary(logitModel)
+
+save(logitModel, file = "logitModelSubset.RData")
 
 # Predict over test data (Logistic Regression).
 
@@ -72,36 +70,34 @@ rxPredict(logitModel, data = testDS, outData = logitPredict,
 
 logitRoc <- rxRoc("ArrDel15", "ArrDel15_Pred", logitPredict)
 logitAuc <- rxAuc(logitRoc)
-# 0.6611517
+# 0.645261
 
 plot(logitRoc)
-
-save(logitModel, file = "logitModelSubset.RData")
 
 
 #####################################
 # rxEnsemble of fastTrees
 #####################################
 
-trainXDF <- RxXdfData( file.path(dataDir, "trainXDF" ))
-rxDataStep( inData = trainDS, outFile = trainXDF, overwrite = T )
-
-testXDF <- RxXdfData( file.path(dataDir, "testXDF" ))
-rxDataStep( inData = testDS, outFile = testXDF, overwrite = T )
-
-trainers <- list(fastTrees())
+trainers <- list(fastTrees(numTrees = 50))
 
 fastTreesEnsembleModelTime <- system.time(
-  fastTreesEnsembleModel <- rxEnsemble(formula, data = trainXDF,
-    type = "binary", trainers = trainers, modelCount = 4, splitData = TRUE)
+  fastTreesEnsembleModel <- rxEnsemble(formula, data = trainDS,
+    type = "regression", trainers = trainers, modelCount = 4, splitData = TRUE)
 )
 
-fastTreesEnsembleModel
 summary(fastTreesEnsembleModel)
+
+save(fastTreesEnsembleModel, file = "fastTreesEnsembleModelSubset.RData")
+
+# Test
+testXDF <- RxXdfData( file.path(dataDir, "testXDF" ))
+rxDataStep( inData = testDS, outFile = testXDF, overwrite = T )
 
 fastTreesEnsemblePredict <- RxXdfData(file.path(dataDir, "fastTreesEnsemblePredictSubset"))
 
 rxSetComputeContext("local")
+
 # Runs locally - Can we parallelize this with rxExecBy ?
 fastTreesEnsemblePredictTime <- system.time(
   rxPredict(fastTreesEnsembleModel, data = testXDF, outData = fastTreesEnsemblePredict,
@@ -111,13 +107,11 @@ fastTreesEnsemblePredictTime <- system.time(
 
 # Calculate ROC and Area Under the Curve (AUC).
 
-fastTreesEnsembleRoc <- rxRoc("ArrDel15", "Probability.1", fastTreesEnsemblePredict)
+fastTreesEnsembleRoc <- rxRoc("ArrDel15", "Score", fastTreesEnsemblePredict)
 fastTreesEnsembleAuc <- rxAuc(fastTreesEnsembleRoc)
-# 0.678672
+# 0.6666943
 
 plot(fastTreesEnsembleRoc)
-
-save(fastTreesEnsembleModel, file = "fastTreesEnsembleModelSubset.RData")
 
 #####################################
 # TODO: H2O interop
