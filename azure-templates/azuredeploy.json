@@ -10,7 +10,7 @@
 		},
 		"clusterLoginUserName": {
 			"type": "string",
-			"default": "admin",
+			"value": "admin",
 			"metadata": {
 				"description": "These credentials can be used to submit jobs to the cluster and to log into cluster dashboards."
 			}
