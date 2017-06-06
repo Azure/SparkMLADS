@@ -9,11 +9,10 @@
 			}
 		},
 		"clusterLoginUserName": {
-		    "type": "string",
-		    "default": "admin",
-		    "metadata": {
-			"description": "These credentials can be used to submit jobs to the cluster and to log into cluster dashboards."
-		    }
+			"type": "string",
+			"metadata": {
+				"description": "These credentials can be used to submit jobs to the cluster and to log into cluster dashboards."
+			}
 		},
 		"clusterLoginPassword": {
 			"type": "securestring",
