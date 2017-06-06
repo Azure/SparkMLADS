@@ -83,7 +83,7 @@ trainers <- list(fastTrees(numTrees = 50))
 
 fastTreesEnsembleModelTime <- system.time(
   fastTreesEnsembleModel <- rxEnsemble(formula, data = trainDS,
-    type = "regression", trainers = trainers, modelCount = 4, splitData = TRUE)
+    type = "regression", trainers = trainers, modelCount = 16, splitData = TRUE)
 )
 
 summary(fastTreesEnsembleModel)
@@ -91,16 +91,13 @@ summary(fastTreesEnsembleModel)
 save(fastTreesEnsembleModel, file = "fastTreesEnsembleModelSubset.RData")
 
 # Test
-testXDF <- RxXdfData( file.path(dataDir, "testXDF" ))
-rxDataStep( inData = testDS, outFile = testXDF, overwrite = T )
-
 fastTreesEnsemblePredict <- RxXdfData(file.path(dataDir, "fastTreesEnsemblePredictSubset"))
 
-rxSetComputeContext("local")
+# Experimental feature to parallelize rxPredict when using a MicrosoftML model
+assign("predictMethod", "useDataStep", envir = MicrosoftML:::rxHashEnv)
 
-# Runs locally - Can we parallelize this with rxExecBy ?
 fastTreesEnsemblePredictTime <- system.time(
-  rxPredict(fastTreesEnsembleModel, data = testXDF, outData = fastTreesEnsemblePredict,
+  rxPredict(fastTreesEnsembleModel, data = testDS, outData = fastTreesEnsemblePredict,
           extraVarsToWrite = c("ArrDel15"),
           overwrite = TRUE)
 )
@@ -109,7 +106,7 @@ fastTreesEnsemblePredictTime <- system.time(
 
 fastTreesEnsembleRoc <- rxRoc("ArrDel15", "Score", fastTreesEnsemblePredict)
 fastTreesEnsembleAuc <- rxAuc(fastTreesEnsembleRoc)
-# 0.6666943
+# 0.6662082
 
 plot(fastTreesEnsembleRoc)
 
