@@ -1,3 +1,6 @@
+# Note: when switching between tutorial examples,
+# restart R by clicking Session | Restart R in RStudio
+
 # install.packages("ggplot2", "tidyr")
 # see /home/sshuser/SparkMLADS/Code/MRS/SetComputeContext.r
 Sys.setenv(SPARK_HOME="/usr/hdp/current/spark2-client")
