@@ -112,7 +112,12 @@ plot(fastTreesEnsembleRoc)
 
 rxSparkDisconnect(cc)
 
-# Restore default settings
+# Note - Restart R to switch to default HDFS settings:
+# 
+# rxOptions(hdfsHost = "default")
+# rxOptions(fileSystem = RxNativeFileSystem())
 
-rxOptions(hdfsHost = "default")
-rxOptions(fileSystem = RxNativeFileSystem())
+# See the following blog post for more sparklyr/rsparkling/H2O interop examples:
+#
+# https://blogs.msdn.microsoft.com/microsoftrservertigerteam/2017/04/19/new-features-in-9-1-microsoft-r-server-with-sparklyr-interoperability
+#
