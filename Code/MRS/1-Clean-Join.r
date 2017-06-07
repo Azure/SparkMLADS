@@ -40,7 +40,7 @@ weatherDF <- sparklyr::spark_read_csv(sc = sc,
 ################################################
 
 
-airlineDF <- rename(airlineDF,
+airlineDF <- airlineDF %>% rename(
                     ArrDel15 = ARR_DEL15,
                     Year = YEAR,
                     Month = MONTH,
@@ -56,11 +56,9 @@ airlineDF <- rename(airlineDF,
 
 # Keep only the desired columns from the flight data 
 
-varsToKeep <- c("ArrDel15", "Year", "Month", "DayOfMonth", 
-                "DayOfWeek", "Carrier", "OriginAirportID", 
-                "DestAirportID", "CRSDepTime", "CRSArrTime")
-
-airlineDF <- select_(airlineDF, .dots = varsToKeep)
+airlineDF <- airlineDF %>% select(ArrDel15, Year, Month, DayOfMonth, 
+                    DayOfWeek, Carrier, OriginAirportID, 
+                    DestAirportID, CRSDepTime, CRSArrTime)
 
 
 # Round down scheduled departure time to full hour
@@ -68,7 +66,7 @@ airlineDF <- select_(airlineDF, .dots = varsToKeep)
 airlineDF <- airlineDF %>% mutate(CRSDepTime = floor(CRSDepTime / 100))
 
 
-weatherDF <- rename(weatherDF,
+weatherDF <- weatherDF %>% rename(
                     OriginAirportID = AirportID,
                     Year = AdjustedYear,
                     Month = AdjustedMonth,
@@ -107,13 +105,12 @@ originDF <- originDF %>% rename(VisibilityOrigin = Visibility,
 # Join airline data with weather at Destination Airport
 #######################################################
 
-weatherSummary <- rename(weatherSummary,
-                       DestAirportID = OriginAirportID)
-                       
+weatherSummary <- weatherSummary %>% rename(DestAirportID = OriginAirportID)
+
 destDF <- left_join(x = originDF,
                     y = weatherSummary)
 
-airWeatherDF <- rename(destDF,
+airWeatherDF <- destDF %>% rename(
                        VisibilityDest = Visibility,
                        DryBulbCelsiusDest = DryBulbCelsius,
                        DewPointCelsiusDest = DewPointCelsius,
@@ -125,7 +122,7 @@ airWeatherDF <- rename(destDF,
 #######################################################
 # Register the joined data as a Spark SQL/Hive table
 #######################################################
-  
+
 airWeatherDF <- airWeatherDF %>% sdf_register("flightsweather")
 tbl_cache(sc, "flightsweather")
 
