@@ -13,7 +13,7 @@ CHUNK_SIZE <- 1e5 # must divide a million evenly
 
 NUM_VARS <- 10
 NOISE <- 20
-SIMULATE_DATA <- FALSE
+SIMULATE_DATA <- TRUE
 RUN_LOCAL <- TRUE
 HDINSIGHT <- TRUE
 
