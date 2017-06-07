@@ -1,4 +1,4 @@
-# Microsoft R with Spark on HDInsight Tutorial at MLADS
+# Scalable Machine Learning with Spark and R on HDInsight
 
 *Instructors*: Robert Horton, Mario Inchiosa, Ali Zaidi, Katherine Zhao
 
