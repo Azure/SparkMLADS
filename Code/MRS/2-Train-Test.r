@@ -111,3 +111,8 @@ fastTreesEnsembleAuc <- rxAuc(fastTreesEnsembleRoc)
 plot(fastTreesEnsembleRoc)
 
 rxSparkDisconnect(cc)
+
+# Restore default settings
+
+rxOptions(hdfsHost = "default")
+rxOptions(fileSystem = RxNativeFileSystem())
