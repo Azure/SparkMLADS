@@ -4,11 +4,11 @@
 
 # Course Scripts: [https://aka.ms/mlads2017r](https://aka.ms/mlads2017r)
 
-## Requirements
+# Requirements
 
 * An Azure subscription
 
-## Deploying to Azure
+# Tutorial Cluster Deployment Instructions
 
 1.	Go to https://github.com/Azure/SparkMLADS/tree/master/azure-templates 
 2.	Click the “Deploy to Azure” button
@@ -22,6 +22,7 @@
 
     ![Image of the cluster overview](https://raw.githubusercontent.com/Azure/SparkMLADS/master/imgs/cluster-overview.PNG)
 
+6.	Once in RStudio, go to the Files pane in the lower right-hand corner and click on "SparkMLADS" and then "Code". Here you will find the directories for the hands-on tutorial scripts.
 
 # Contributing
 
