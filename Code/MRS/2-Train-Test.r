@@ -110,10 +110,4 @@ fastTreesEnsembleAuc <- rxAuc(fastTreesEnsembleRoc)
 
 plot(fastTreesEnsembleRoc)
 
-#####################################
-# TODO: H2O interop
-#####################################
-
-
-# For local compute context, skip the following line
 rxSparkDisconnect(cc)
