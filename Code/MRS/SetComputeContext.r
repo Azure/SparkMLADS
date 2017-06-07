@@ -48,25 +48,6 @@ if(useHDFS) {
   ################################################
 }
 
-################################################
-# Distributed computing using Spark
-################################################
-
-startRxSpark <- function() {
-  if (useHDFS) {
-    # When running on an HDInsight cluster,
-    # specifying numExecutors, executorCores,
-    # and executorMem is optional
-    rxSparkConnect(reset = T,
-                   consoleOutput = TRUE, 
-                   numExecutors = 4,  # FOR HDINSIGHT CLUSTER
-                   executorCores = 8, # FOR HDINSIGHT CLUSTER
-                   executorMem = "4g" # FOR HDINSIGHT CLUSTER
-    )
-  } else {
-    cat("Using local compute context to process local data.\n")
-  }
-}
 
 rxRoc <- function(...){
   previousContext <- rxSetComputeContext(RxLocalSeq())
