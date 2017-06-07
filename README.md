@@ -12,7 +12,7 @@
 
 1.	Go to https://github.com/Azure/SparkMLADS/tree/master/azure-templates 
 2.	Click the “Deploy to Azure” button
-3.	Fill in the form and click “Purchase”. Here is an example:
+3.	Fill in the form and click “Purchase”. **IMPORTANT**: Set *Cluster Login User Name* = "**admin**" and *Ssh User Name* = "**sshuser**". Here is an example:
 
     ![Image of creating a new cluster](https://raw.githubusercontent.com/Azure/SparkMLADS/master/imgs/portal-template.PNG)
 
