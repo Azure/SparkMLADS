@@ -2,7 +2,7 @@
 
 *Instructors*: Robert Horton, Mario Inchiosa, Ali Zaidi, Katherine Zhao
 
-# [Course Scripts: aka.ms/mlads2017r](aka.ms/mlads2017r)
+# [Course Scripts: https://aka.ms/mlads2017r](https://aka.ms/mlads2017r)
 
 ## Requirements
 
