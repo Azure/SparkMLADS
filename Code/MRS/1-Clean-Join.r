@@ -1,3 +1,6 @@
+# Note: when switching between tutorial examples,
+# restart R by clicking Session | Restart R in RStudio
+
 setwd("/home/sshuser/SparkMLADS/Code/MRS")
 source("SetComputeContext.r")
 
@@ -6,7 +9,7 @@ library(dplyr)
 
 cc <- rxSparkConnect(interop = "sparklyr",
                      reset = T,
-                     consoleOutput = TRUE,
+                     consoleOutput = TRUE
                      # numExecutors = 4,
                      # executorCores = 8,
                      # executorMem = "4g"
