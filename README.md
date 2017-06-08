@@ -16,8 +16,6 @@
 
     ![Image of creating a new cluster](https://raw.githubusercontent.com/Azure/SparkMLADS/master/imgs/portal-template.PNG)
 
-    - **Password requirements**: _Your password must be at least 8 characters in length and must contain at least one digit, one non-alphanumeric character, one upper case letter and one lower case letter. Also, the password should not contain 3 consecutive letters from the username_.
-
 4.	Wait 30-40 minutes for the cluster to deploy
 
 5.	We will run our R scripts using the RStudio IDE. To launch RStudio in your browser, from the cluster overview in the Azure portal, click "R Server dashboards" and then "R Studio server". At the first login screen, enter "admin" and the password you supplied. At the second login screen, enter "sshuser" and the password you supplied.
