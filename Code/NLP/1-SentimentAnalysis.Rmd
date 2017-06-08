@@ -23,6 +23,7 @@ Our data is taken from the paper __Learning Word Vectors for Sentiment Analysis_
 
 ```{r load_imdb}
 
+Sys.setenv(SPARK_HOME = "/usr/hdp/current/spark2-client")
 cc <- rxSparkConnect()
 train_xdf <- RxXdfData("/imdbdata/train/",
                        fileSystem = RxHdfsFileSystem())
