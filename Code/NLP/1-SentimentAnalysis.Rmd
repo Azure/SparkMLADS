@@ -102,7 +102,7 @@ coefs %>%
 
 ```
 
-Let's try and makea  more interactive visual. We'll use `purrr` again to map our coefficients to the beautiful [d3wordcloud](https://github.com/jbkunst/d3wordcloud) package
+Let's try and make a  more interactive visual. We'll use `purrr` again to map our coefficients to the beautiful [d3wordcloud](https://github.com/jbkunst/d3wordcloud) package
 
 ```{r d3word}
 
@@ -123,22 +123,23 @@ d3_graphs[[2]]
 In order to predict our classifer on test data, we will use the `mxPredict` function from the `MML` package.
 
 ```{r scorelogit}
+rxSetComputeContext("local")
 
-predictions <- rxPredict(logit_model, data = test_xdf, extraVarsToWrite = "sentiment")
-roc_results <- rxRoc(actualVarName = "sentiment", predVarNames = "Probability.1", data = predictions)
-roc_results$predVarName <- factor(roc_results$predVarName)
-plot(roc_results)
-
+pred_logit <- rxPredict(logit_model, data = test_xdf, extraVarsToWrite = "sentiment")
+names(pred_logit)[ncol(pred_logit)] <- "logit"
 ```
 
 ### Testing the Fast Trees Model
 
 ```{r score_sdca}
-predictions <- rxPredict(fast_trees, data = test_xdf, extraVarsToWrite = "sentiment")
-roc_results <- rxRoc(actualVarName = "sentiment", predVarNames = "Probability.1", data = predictions)
-roc_results$predVarName <- factor(roc_results$predVarName)
-plot(roc_results)
-
+pred_trees <- rxPredict(fast_trees, data = test_xdf, extraVarsToWrite = "sentiment")
+names(pred_trees)[ncol(pred_trees)] <- "fastTrees"
+preds <- pred_logit %>% select(sentiment, logit) %>% 
+  bind_cols(select(pred_trees, fastTrees))
+results <- rxRoc(actualVarName = "sentiment",
+                 predVarNames = c("logit", "fastTrees"),
+                 data = preds)
+plot(results)
 
 ```
 
@@ -169,8 +170,79 @@ nn_sentiment <- rxNeuralNet(sentiment ~ reviewTran,
 We can similary score our results from the neural network model
 
 ```{r}
-predictions <- rxPredict(nn_sentiment, data = test_xdf, extraVarsToWrite = "sentiment")
-roc_results <- rxRoc(actualVarName = "sentiment", predVarNames = "Probability.1", data = predictions)
-roc_results$predVarName <- factor(roc_results$predVarName)
-plot(roc_results)
+pred_nn <- rxPredict(nn_sentiment, 
+                     data = test_xdf, 
+                     extraVarsToWrite = "sentiment")
+names(pred_nn)[ncol(pred_nn)] <- "neuralNet"
+preds <- preds %>% 
+  select(sentiment, logit, fastTrees) %>% 
+  bind_cols(select(pred_nn, neuralNet))
+results <- rxRoc(actualVarName = "sentiment",
+                 predVarNames = c("logit", "fastTrees", "neuralNet"),
+                 data = preds)
+plot(results)
 ```
+
+
+
+```{r rxexec}
+
+# cc <- rxSparkConnect()
+# 
+# learners <- list(rxNeuralNet,
+#                  rxFastTrees)
+# 
+# train <- function(model) {
+#   
+#  run_model <-  model(formula = sentiment ~ reviewTran,
+#                      data = train_xdf,
+#                      mlTransforms = list(
+#                        featurizeText(vars = c(reviewTran = "review"),
+#                                      language = "English",
+#                                      stopwordsRemover = stopwordsDefault(),
+#                                      wordFeatureExtractor = ngramCount(3),
+#                                      keepNumbers = FALSE,
+#                                      keepPunctuations = FALSE)))
+#   
+#   return(run_model)
+#   
+# }
+# 
+# all_learners <- rxExec(train, model = rxElemArg(learners),
+#                        execObjects = "train_xdf")
+
+```
+
+Make predictions:
+
+```{r}
+
+# validate_model <- function(trained_model) {
+#   
+#   preds <- rxPredict(trained_model, 
+#                      data = test_xdf, 
+#                      extraVarsToWrite = "sentiment")
+#   
+#   names(preds)[ncol(preds)] <- deparse(substitute(trained_model))
+#   
+#   return(preds)
+#   
+# }
+
+```
+
+
+Run all:
+
+```{r}
+
+# all_scores <- lapply(all_learners, validate_model)
+# names(all_scores) <- c("rxNeuralNet", "rxFastTrees")
+# scores_df <- bind_cols(all_scores)
+# 
+# results <- rxRoc(actualVarName = "sentiment",
+#                  predVarNames = c("rxNeuralNet", "rxFastTrees"),
+#                  data = scores_df)
+# plot(results)
+```
+
