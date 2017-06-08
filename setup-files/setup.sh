@@ -36,5 +36,6 @@ hdfs dfs -mkdir hdfs://mycluster/share
 hdfs dfs -copyFromLocal Air2009to2012CSV hdfs://mycluster/share
 hdfs dfs -copyFromLocal Weather hdfs://mycluster/share
 
-Revo64 -e 'install.packages(c("sparklyr", "ggplot2", "tidyr"), repos = "https://mran.microsoft.com/snapshot/2017-05-01")'
+Revo64 -e 'install.packages(c("sparklyr", "ggplot2", "tidyr", "ggrepel", "devtools"), repos = "https://mran.microsoft.com/snapshot/2017-05-01")'
+Revo64 -e 'devtools::install_github("jbkunst/d3wordcloud")'
 
