@@ -182,3 +182,67 @@ results <- rxRoc(actualVarName = "sentiment",
                  data = preds)
 plot(results)
 ```
+
+
+
+```{r rxexec}
+
+# cc <- rxSparkConnect()
+# 
+# learners <- list(rxNeuralNet,
+#                  rxFastTrees)
+# 
+# train <- function(model) {
+#   
+#  run_model <-  model(formula = sentiment ~ reviewTran,
+#                      data = train_xdf,
+#                      mlTransforms = list(
+#                        featurizeText(vars = c(reviewTran = "review"),
+#                                      language = "English",
+#                                      stopwordsRemover = stopwordsDefault(),
+#                                      wordFeatureExtractor = ngramCount(3),
+#                                      keepNumbers = FALSE,
+#                                      keepPunctuations = FALSE)))
+#   
+#   return(run_model)
+#   
+# }
+# 
+# all_learners <- rxExec(train, model = rxElemArg(learners),
+#                        execObjects = "train_xdf")
+
+```
+
+Make predictions:
+
+```{r}
+
+# validate_model <- function(trained_model) {
+#   
+#   preds <- rxPredict(trained_model, 
+#                      data = test_xdf, 
+#                      extraVarsToWrite = "sentiment")
+#   
+#   names(preds)[ncol(preds)] <- deparse(substitute(trained_model))
+#   
+#   return(preds)
+#   
+# }
+
+```
+
+
+Run all:
+
+```{r}
+
+# all_scores <- lapply(all_learners, validate_model)
+# names(all_scores) <- c("rxNeuralNet", "rxFastTrees")
+# scores_df <- bind_cols(all_scores)
+# 
+# results <- rxRoc(actualVarName = "sentiment",
+#                  predVarNames = c("rxNeuralNet", "rxFastTrees"),
+#                  data = scores_df)
+# plot(results)
+```
+
