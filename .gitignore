@@ -8,3 +8,4 @@
 ## ignore db meta
 derby.log
 metastore_db
+.Rproj.user
