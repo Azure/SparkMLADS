@@ -171,7 +171,7 @@
               "scriptActions": [
                   {
                       "name": "Set up tutorial",
-                      "uri": "https://raw.githubusercontent.com/Azure/SparkMLADS/master/setup-files/setup.sh",
+                      "uri": "https://raw.githubusercontent.com/Azure/SparkMLADS/az/setup-files/setup.sh",
                       "parameters": "",
                       "isHeadNode": false,
                       "isWorkerNode": false,
