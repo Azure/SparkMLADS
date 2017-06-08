@@ -1,5 +1,4 @@
 ## ignore proj files
-*.Rproj
 *.Rproj.user
 *.rxproj
 *.sln
