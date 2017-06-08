@@ -48,6 +48,6 @@ rxDataStep(inData = test_xdf,
 r <- getOption('repos')
 r[["CRAN"]] <- paste0("https://mran.microsoft.com/snapshot/", Sys.Date() - 2)
 options(repos = r)
-install.packages(c('devtools', 'ggrepel'))
+install.packages(c('devtools', 'ggrepel', 'purrr'))
 install.packages(c("curl", "httr"))
 devtools::install_github("jbkunst/d3wordcloud")
