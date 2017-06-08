@@ -102,7 +102,7 @@ coefs %>%
 
 ```
 
-Let's try and makea  more interactive visual. We'll use `purrr` again to map our coefficients to the beautiful [d3wordcloud](https://github.com/jbkunst/d3wordcloud) package
+Let's try and make a  more interactive visual. We'll use `purrr` again to map our coefficients to the beautiful [d3wordcloud](https://github.com/jbkunst/d3wordcloud) package
 
 ```{r d3word}
 

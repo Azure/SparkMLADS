@@ -8,8 +8,10 @@ download.file("https://alizaidi.blob.core.windows.net/training/data/imdb-test.xd
                                    "imdb-test.xdf"))
 
 ## make local pointers
-train_xdf <- RxXdfData("imdb-train.xdf")
-test_xdf <- RxXdfData("imdb-test.xdf")
+train_xdf <- RxXdfData(file.path("/home/", system("whoami", intern = TRUE), "SparkMLADS",
+                                 "imdb-train.xdf"))
+test_xdf <- RxXdfData(file.path("/home/", system("whoami", intern = TRUE), "SparkMLADS",
+                                "imdb-test.xdf"))
 
 ## make hdfs pointers
 hdfs <- RxHdfsFileSystem()
