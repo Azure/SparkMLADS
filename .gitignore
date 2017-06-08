@@ -3,6 +3,7 @@
 *.Rproj.user
 *.rxproj
 *.sln
+*.Rhistory
 
 ## ignore db meta
 derby.log
